@@ -14,7 +14,7 @@ double add(double a, double b)
 
 int main()
 {
-    std::cout << add(3, 4) << "\n";     // Calls int version: 7
-    std::cout << add(3.5, 4.2) << "\n"; // Calls double version: 7.7
+    std::cout << add(3, 4) << '\n';     // Calls int version: outputs 7
+    std::cout << add(3.5, 4.2) << '\n'; // Calls double version: outputs 7.7
     return 0;
 }
