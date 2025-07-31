@@ -26,9 +26,8 @@ double fahrenheitToCelsius(double fahrenheit)
 
 double celsiusToFahrenheitRecursive(double celsius)
 {
-    if (celsius == 0)
-        return 32;                                                // Base case: 0°C = 32°F
-    return celsiusToFahrenheitRecursive(celsius - 1) + 9.0 / 5.0; // Recursive step
+    // Use the direct formula for Celsius to Fahrenheit conversion
+    return (celsius * 9.0 / 5.0) + 32;
 }
 
 void displayMenu()
