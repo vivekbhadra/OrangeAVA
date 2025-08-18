@@ -1,4 +1,4 @@
-// file_write_safe.cpp
+// nodiscard_safesquare.cpp
 // This program demonstrates safe file writing with error handling.
 #include <iostream>
 
