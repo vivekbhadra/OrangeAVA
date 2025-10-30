@@ -21,5 +21,6 @@ int main()
     // processLvalue(std::string("Temp")); // Error: cannot bind non-const lvalue reference to temporary
     processConstLvalue(std::string("Temp")); // OK: lifetime is extended
     processRvalue(std::string("Temp"));      // OK: moves resources from temporary
+
     return 0;
 }
