@@ -27,7 +27,14 @@ class DataPacket
     }
 
     // Move operations (noexcept)
-    DataPacket(DataPacket &&) noexcept = default;
+    // Custom move constructor to reset moved-from object
+    DataPacket(DataPacket &&other) noexcept
+        : readings_(std::move(other.readings_)), timestamp_(other.timestamp_), sensorId_(std::move(other.sensorId_))
+    {
+        other.readings_.clear();
+        other.timestamp_ = {}; // ensures "-" after move
+        other.sensorId_.clear();
+    }
     DataPacket &operator=(DataPacket &&) noexcept = default;
 
     // Delete copy operations to enforce move-only semantics
@@ -150,9 +157,8 @@ struct ValidRange
 [[nodiscard]] std::vector<float> filter_readings(const std::vector<float> &in, ValidRange r)
 {
     std::vector<float> out = in;
-    // use C++20 ranges remove_if to obtain the new end, then erase the tail
     auto newEnd = std::ranges::remove_if(out, [r](float v) { return !std::isfinite(v) || v < r.min || v > r.max; });
-    out.erase(newEnd, out.end());
+    out.erase(newEnd.begin(), out.end()); // Works with GCC 11.4.0
     return out;
 }
 
@@ -162,7 +168,7 @@ struct ValidRange
     // 1) Calibrate
     std::vector<float> calibrated;
     calibrated.reserve(raw.size());
-    Calibrator calibrator{cp};
+    Calibrator calibrator{ cp };
     std::transform(raw.begin(), raw.end(), std::back_inserter(calibrated), calibrator);
 
     // 2) Filter
@@ -177,11 +183,11 @@ struct ValidRange
     return std::make_optional<DataPacket>(std::move(filtered), now, std::move(sensorId));
 }
 
-void transmit(DataPacket &&packet)
+// Corrected version: take by value to trigger move construction
+void transmit(DataPacket packet)
 {
     std::cout << "Transmitting packet: ";
     packet.print_summary();
-    // simulate payload send
     std::string payload = packet.serialize();
     std::cout << "Payload size: " << payload.size() << " bytes\n";
 }
@@ -191,11 +197,11 @@ int main()
     using std::chrono::system_clock;
 
     // Simulated raw data for two sensors
-    std::vector<float> raw1 = {23.1f, 24.0f, std::numeric_limits<float>::quiet_NaN(), 22.9f};
-    std::vector<float> raw2 = {-1000.0f, 19.5f, 20.0f, std::numeric_limits<float>::infinity()};
+    std::vector<float> raw1 = { 23.1f, 24.0f, std::numeric_limits<float>::quiet_NaN(), 22.9f };
+    std::vector<float> raw2 = { -1000.0f, 19.5f, 20.0f, std::numeric_limits<float>::infinity() };
 
-    CalibrationParams cp{1.0f, 0.0f};
-    ValidRange vr{20.0f, 25.0f};
+    CalibrationParams cp{ 1.0f, 0.0f };
+    ValidRange vr{ 20.0f, 25.0f };
 
     if (auto opt = process_pipeline(raw1, cp, vr, std::string("S1")))
     {
