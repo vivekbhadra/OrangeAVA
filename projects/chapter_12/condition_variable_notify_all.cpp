@@ -31,10 +31,10 @@ void producer()
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Simulate task preparation
     {
-        std::lock_guard<std::mutex> lock(mtx);
-        ready = true;
+        std::lock_guard<std::mutex> lock(mtx); // Lock the mutex
+        ready = true;                          // Set the flag to true
         std::cout << "Producer: task prepared, notifying all consumers.\n";
-    }
+    } // Unlocks mutex here
 
     // Wake up all waiting consumers
     cv.notify_all();
@@ -48,7 +48,7 @@ int main()
     std::vector<std::thread> consumers;
     for (int i = 1; i <= 3; ++i)
     {
-        consumers.emplace_back(consumer, i);
+        consumers.emplace_back(consumer, i); // emplace_back to construct in place
     }
 
     // Launch producer

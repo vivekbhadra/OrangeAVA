@@ -8,36 +8,38 @@
 #include <string>
 #include <thread>
 
-std::mutex mtx;
-std::condition_variable cv;
-bool ready = false;
-std::string message;
+std::mutex mtx;             // Mutex for synchronizing access
+std::condition_variable cv; // Condition variable for notification
+bool ready = false;         // data availability flag
+std::string message;        // Shared data
 
 void producer()
 {
     {
-        std::lock_guard<std::mutex> lock(mtx);
-        message = "Data prepared by producer";
+        std::lock_guard<std::mutex> lock(mtx); // Lock the mutex
+        message = "Data prepared by producer"; // data populated by producer
         ready = true;
         std::cout << "Producer: message prepared.\n";
-    }
+    }                // Unlocks mutex here
     cv.notify_one(); // Notify one waiting thread
+                     // or cv.notify_all() to wake all waiting threads
 }
 
 void consumer()
 {
-    std::unique_lock<std::mutex> lock(mtx);
-    cv.wait(lock, [] { return ready; }); // Wait until ready becomes true
+    std::unique_lock<std::mutex> lock(mtx); // we need more controlle over the lock
+                                            // hence std::unique_lock, not std::lock_guard
+    cv.wait(lock, [] { return ready; });    // Wait until ready becomes true
     std::cout << "Consumer: received -> " << message << '\n';
 }
 
 int main()
 {
-    std::thread t1(consumer);
-    std::thread t2(producer);
+    std::thread t1(consumer); // Start consumer thread first
+    std::thread t2(producer); // Then start producer thread
 
-    t1.join();
-    t2.join();
+    t1.join(); // Wait for consumer to finish
+    t2.join(); // Wait for producer to finish
 
     return 0;
 }

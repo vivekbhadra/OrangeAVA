@@ -13,12 +13,12 @@ std::atomic<bool> flag{ false };
 void worker(int id)
 {
     // Increment the shared counter atomically
-    counter.fetch_add(1, std::memory_order_relaxed);
+    counter.fetch_add(1, std::memory_order_relaxed); // memory_order_relaxed for simple increment
 
     // The last thread to increment sets the flag
     if (id == 4)
     {
-        flag.store(true, std::memory_order_release);
+        flag.store(true, std::memory_order_release); // memory_order_release for visibility
     }
 }
 
@@ -38,7 +38,8 @@ int main()
     }
 
     std::cout << "Main: Final counter value = " << counter.load(std::memory_order_relaxed) << '\n';
-    std::cout << "Main: Flag status = " << std::boolalpha << flag.load(std::memory_order_acquire) << '\n';
+    std::cout << "Main: Flag status = " << std::boolalpha << flag.load(std::memory_order_acquire)
+              << '\n'; // memory_order_acquire to synchronize with release
 
     return 0;
 }
