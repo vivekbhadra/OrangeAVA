@@ -3,14 +3,14 @@
 #include <iostream>
 
 // This is a function that adds two integers and returns the result
-int add(int a, int b)
+int add(const int a, const int b)
 {
     return a + b;
 }
 
 int main()
 {
-    int result = add(5, 3); // Function is invoked here
+    const int result = add(5, 3); // Function is invoked here
     std::cout << "Sum is: " << result << std::endl;
     return 0;
 }

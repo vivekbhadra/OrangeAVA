@@ -1,6 +1,7 @@
 // access_control_fallthrough.cpp
-// This program demonstrates the use of fallthrough in switch statements
-// to manage access control based on user roles.
+// Demonstrates intentional fall-through using [[fallthrough]]
+// to model cumulative user permissions
+
 #include <iostream>
 
 int main()
@@ -15,10 +16,10 @@ int main()
     {
     case 3:
         std::cout << "- Access Admin Tools\n";
-        // Fall-through intended to include Editor and Viewer rights
+        [[fallthrough]];  // Intentional fall-through to include Editor and Viewer permissions
     case 2:
         std::cout << "- Edit Content\n";
-        // Fall-through intended to include Viewer rights
+        [[fallthrough]];  // Intentional fall-through to include Viewer permissions
     case 1:
         std::cout << "- View Content\n";
         break;
@@ -28,3 +29,4 @@ int main()
 
     return 0;
 }
+

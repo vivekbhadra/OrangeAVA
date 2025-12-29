@@ -7,7 +7,7 @@ int main()
     int x = 0;
     while (x < 3)
     {
-        std::cout << x;
+        std::cout << x << "\n";
         ++x;
     }
     return 0;
