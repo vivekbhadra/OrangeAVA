@@ -1,42 +1,34 @@
 // thread_detach_example.cpp
-// This code demonstrates the use of detached threads in C++17.
-// A background thread is launched to monitor system health
-// while the main thread simulates handling client requests.
-#include <atomic>
+// Demonstrates detaching a background thread for system monitoring
 #include <chrono>
 #include <iostream>
 #include <thread>
 
-std::atomic<bool> running(true);
-
 void monitor_system()
 {
-    while (running)
+    auto start = std::chrono::steady_clock::now();
+    while ((std::chrono::steady_clock::now() - start) < std::chrono::seconds(8))
     {
         std::cout << "[Monitor] Checking system health...\n";
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-    std::cout << "[Monitor] Shutting down cleanly.\n";
+    std::cout << "[Monitor] Timed out and shutting down cleanly.\n";
 }
 
 int main()
 {
     std::cout << "Main: Starting server...\n";
 
-    // Launch a background monitoring thread and detach it
+    // Launch and detach background monitoring thread
     std::thread monitor_thread(monitor_system);
     monitor_thread.detach();
 
-    // Simulate main server activity
+    // Simulate main server activity (shorter than monitor timeout)
     for (int i = 0; i < 5; ++i)
     {
         std::cout << "Main: Handling client request " << i << '\n';
         std::this_thread::sleep_for(std::chrono::milliseconds(800));
     }
-
-    // Signal the monitor to stop before exiting
-    running = false;
-    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     std::cout << "Main: Server shutting down.\n";
     return 0;
