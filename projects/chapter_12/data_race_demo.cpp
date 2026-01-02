@@ -21,5 +21,5 @@ int main()
     std::thread t2(worker);
     t1.join();
     t2.join();
-    std::cout << "counter = " << counter << '\n';
+    std::cout << "Final counter value: " << counter << '\n';
 }
