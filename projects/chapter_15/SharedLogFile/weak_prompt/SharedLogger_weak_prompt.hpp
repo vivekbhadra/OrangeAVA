@@ -1,8 +1,5 @@
-/*
- * File: SharedLogger.hpp
- * Purpose: Thread-safe shared log file manager
- */
-
+// SharedredLogger_weak_prompt.hpp
+// This is the header file for a thread-safe shared log file manager in C++14.
 #ifndef SHARED_LOGGER_HPP
 #define SHARED_LOGGER_HPP
 
